@@ -78,7 +78,10 @@ const App = ()=> {
   }, 0);
 
   return (
-    <div>
+    
+    <div className='container'>
+     
+      <br/> 
       <nav>
         <Link to='/products'>Products ({ products.length })</Link>
         <Link to='/orders'>Orders ({ orders.filter((order) => {return !order.is_cart}).length })</Link>

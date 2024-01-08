@@ -10,9 +10,10 @@ const Cart = ({ updateOrder, removeFromCart, lineItems, cart, products })=> {
             const product = products.find(product => product.id === lineItem.product_id) || {};
             return (
               <li key={ lineItem.id }>
-                { product.name }
+                { product.name } Price ${product.price * lineItem.quantity}.00
                 ({ lineItem.quantity })
                 <button onClick={ ()=> removeFromCart(lineItem)}>Remove From Cart</button>
+                {products.price}
               </li>
             );
           })

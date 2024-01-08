@@ -20,6 +20,10 @@ app.get('/products', async(req, res, next)=> {
   }
 });
 
+app.put('/products', async(req,res,next) => {
+  
+})
+
 app.put('/orders/:id', async(req, res, next)=> {
   try {
     res.send(await updateOrder({ ...req.body, id: req.params.id}));

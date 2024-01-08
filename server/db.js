@@ -19,6 +19,7 @@ const fetchProducts = async()=> {
   const SQL = `
     SELECT *
     FROM products
+    ORDER BY name
   `;
   const response = await client.query(SQL);
   return response.rows;
@@ -26,11 +27,11 @@ const fetchProducts = async()=> {
 
 const createProduct = async(product)=> {
   const SQL = `
-    INSERT INTO products (id, name)
-    VALUES($1, $2)
+    INSERT INTO products (id, name, price, ingredients)
+    VALUES($1, $2, $3, $4)
     RETURNING *
   `;
-  const response = await client.query(SQL, [ uuidv4(), product.name]);
+  const response = await client.query(SQL, [ uuidv4(), product.name, product.price, product.ingredients]);
   return response.rows[0];
 };
 
@@ -123,7 +124,9 @@ const seed = async()=> {
     CREATE TABLE products(
       id UUID PRIMARY KEY,
       created_at TIMESTAMP DEFAULT now(),
-      name VARCHAR(100) UNIQUE NOT NULL
+      name VARCHAR(100) UNIQUE NOT NULL,
+      price INTEGER,
+      ingredients text
     );
 
     CREATE TABLE orders(
@@ -143,15 +146,15 @@ const seed = async()=> {
 
   `;
   await client.query(SQL);
-  const [foo, bar, bazz, quq] = await Promise.all([
-    createProduct({ name: 'foo' }),
-    createProduct({ name: 'bar' }),
-    createProduct({ name: 'bazz' }),
-    createProduct({ name: 'quq' }),
+  const [pizza, burrito, bagel, bread] = await Promise.all([
+    createProduct({ name: 'pizza', price: '2', ingredients: 'pepperoni' }),
+    createProduct({ name: 'burrito', price: '3', ingredients: 'beef & bean' }),
+    createProduct({ name: 'bagel', price: '4', ingredients: 'everything' }),
+    createProduct({ name: 'bread', price: '4', ingredients: 'whole wheat' }),
   ]);
   let orders = await fetchOrders();
   let cart = orders.find(order => order.is_cart);
-  let lineItem = await createLineItem({ order_id: cart.id, product_id: foo.id});
+  let lineItem = await createLineItem({ order_id: cart.id, product_id: pizza.id});
   lineItem.quantity++;
   await updateLineItem(lineItem);
   cart.is_cart = false;
